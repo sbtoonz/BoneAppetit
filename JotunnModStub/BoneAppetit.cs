@@ -23,7 +23,7 @@ namespace Boneappetit
     {
         public const string PluginGUID = "com.rockerkitten.boneappetit";
         public const string PluginName = "BoneAppetit";
-        public const string PluginVersion = "3.2.4";
+        public const string PluginVersion = "3.2.7";
         public AssetBundle GrillAssetBundle;
         public AssetBundle FoodAssetBundle;
         public static BoneAppetit Instance;
@@ -557,9 +557,38 @@ namespace Boneappetit
             {
                 case true:
                     grillFab = GrillAssetBundle.LoadAsset<GameObject>("rk_grill");
+                    if (grillFab.GetComponent<WearNTear>() == null)
+                    {
+                        var wnt =grillFab.AddComponent<WearNTear>();
+                        wnt.m_broken = grillFab;
+                        wnt.m_new = grillFab;
+                        wnt.m_wet = grillFab;
+                        wnt.m_worn = grillFab;
+                        wnt.m_noSupportWear = false;
+                    }
+                    if (grillFab.GetComponent<WearNTear>() != null)
+                    {
+                        var wnt = grillFab.GetComponent<WearNTear>();
+                        wnt.m_supports = false;
+                        wnt.m_noSupportWear = false;
+                    }
                     break;
                 default:
                     grillFab =  FoodAssetBundle.LoadAsset<GameObject>("rk_grill");
+                    if (grillFab.GetComponent<WearNTear>() == null)
+                    {
+                        var wnt = grillFab.AddComponent<WearNTear>();
+                        wnt.m_broken = grillFab;
+                        wnt.m_new = grillFab;
+                        wnt.m_wet = grillFab;
+                        wnt.m_worn = grillFab;
+                    }
+                    if (grillFab.GetComponent<WearNTear>() != null)
+                    {
+                        var wnt = grillFab.GetComponent<WearNTear>();
+                        wnt.m_supports = false;
+                        wnt.m_noSupportWear = false;
+                    }
                     break;
             }
             
@@ -643,7 +672,9 @@ namespace Boneappetit
                 });
             var ovenpiece = ovenfab.GetComponent<Piece>();
             ovenpiece.m_placeEffect = buildStone;
-
+            var wnt = ovenfab.GetComponent<WearNTear>();
+            wnt.m_supports = false;
+            wnt.m_noSupportWear = false;
             PieceManager.Instance.AddPiece(oven);
         }
         private void Prepstation()
@@ -1327,7 +1358,7 @@ namespace Boneappetit
             ItemManager.Instance.AddItem(mead);
 
         }
-        //private void Haggis()
+        
         private void LoadFire()
         {
             fireFab1 = GrillAssetBundle.LoadAsset<GameObject>("rk_campfire");
@@ -1344,6 +1375,8 @@ namespace Boneappetit
                         new RequirementConfig { Item = "Wood", Amount = 2, Recover = true}
                     }
                 });
+            fire1.Piece.m_icon = PrefabManager.Cache.GetPrefab<GameObject>("fire_pit").gameObject.GetComponent<Piece>()
+                .m_icon;
             var firebuild = fireFab1.GetComponent<Piece>();
             firebuild.m_placeEffect = buildStone;
 
@@ -1374,7 +1407,8 @@ namespace Boneappetit
                 });
             var firebuild = fireFab2.GetComponent<Piece>();
             firebuild.m_placeEffect = buildStone;
-
+            fire2.Piece.m_icon = PrefabManager.Cache.GetPrefab<GameObject>("hearth").gameObject.GetComponent<Piece>()
+                .m_icon;
             var firedecay = fireFab2.GetComponent<WearNTear>();
             firedecay.m_destroyedEffect = breakStone;
 
@@ -1402,6 +1436,8 @@ namespace Boneappetit
                         new RequirementConfig { Item = "Chain", Amount = 1, Recover = true }
                     }
                 });
+            fire3.Piece.m_icon = PrefabManager.Cache.GetPrefab<GameObject>("piece_brazierceiling01").gameObject
+                .GetComponent<Piece>().m_icon;
             var firebuild = fireFab3.GetComponent<Piece>();
             firebuild.m_placeEffect = buildStone;
 
